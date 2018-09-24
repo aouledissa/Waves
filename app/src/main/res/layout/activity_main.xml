@@ -6,17 +6,6 @@
     android:padding="24dp"
     tools:context=".waves.MainActivity">
 
-    <!--<com.facebook.shimmer.ShimmerFrameLayout
-        android:id="@+id/shimmerContainer"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:shimmer_auto_start="false">
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="24dp">-->
-
     <ImageView
         android:id="@+id/sampleImg"
         android:layout_width="90dp"
@@ -53,8 +42,5 @@
         android:layout_below="@id/sampleImg"
         android:layout_marginTop="16dp"
         android:foreground="@color/shimmer_base_color" />
-
-    <!--</RelativeLayout>
-</com.facebook.shimmer.ShimmerFrameLayout>-->
 
 </RelativeLayout>
