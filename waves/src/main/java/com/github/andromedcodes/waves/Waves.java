@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.LinearGradient;
 import android.graphics.Shader;
 import android.graphics.drawable.PaintDrawable;
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.disposables.Disposable;
+import io.reactivex.exceptions.CompositeException;
 
 /**
  * Created by mohamed on 20/09/2018.
@@ -57,7 +59,7 @@ public class Waves implements OnDataReady {
             }
             getRequestBuilder()
                     .waveColor(context.getResources().getColor(color))
-                    .duration(duration)
+                    .speed(duration)
                     .stopAllAtOnce(stopAllAtOnce)
                     .start();
         } catch (Exception e) {
@@ -68,6 +70,11 @@ public class Waves implements OnDataReady {
     public static RequestBuilder on(View view) {
         assertInitialized();
         return waves.requestBuilder.on(view);
+    }
+
+    public static RequestBuilder context(Context context) {
+        assertInitialized();
+        return waves.requestBuilder.context(context);
     }
 
     private static <T extends Activity> void instantiateWaves(T target, String suffix) {
@@ -121,8 +128,8 @@ public class Waves implements OnDataReady {
         private static final int START_DELAY = 300;
 
         private List<View> views = new ArrayList<>();
-        private long duration = 1000;
-        private boolean stopAtOnce;
+        private long spped = 1000;
+        private boolean stopAtOnce = false;
         private View leaderView;
 
         private List<Disposable> observerBag = new ArrayList<>();
@@ -130,15 +137,30 @@ public class Waves implements OnDataReady {
                 0xFFD3D3D3,
                 0xFFE3E3E3,
                 0xFFD3D3D3};
+        private Context context = null;
 
         public RequestBuilder waveColor(@ColorRes int color) {
-            shaderColors[1] = views.get(0).getResources().getColor(color);
+            try {
+                shaderColors[1] = this.context.getResources().getColor(color);
+            } catch (NullPointerException e) {
+                throw new CompositeException(new RuntimeException("Waves was not able to resolve the context, " +
+                        "whether you didn't assign a context or you are using the application's context"),
+                        new NullPointerException("Waves couldn't resolve the context." +
+                                " Use the builder method `context(Context context)"));
+            }
             return this;
         }
 
         public RequestBuilder backgroundColor(@ColorRes int color) {
-            shaderColors[0] = views.get(0).getResources().getColor(color);
-            shaderColors[2] = views.get(0).getResources().getColor(color);
+            try {
+                shaderColors[0] = this.context.getResources().getColor(color);
+                shaderColors[2] = this.context.getResources().getColor(color);
+            } catch (NullPointerException e) {
+                throw new CompositeException(new RuntimeException("Waves was not able to resolve the context, " +
+                        "whether you didn't assign a context or you are using the application's context"),
+                        new NullPointerException("Waves couldn't resolve the context." +
+                                " Use the builder method `context(Context context)"));
+            }
             return this;
         }
 
@@ -147,8 +169,22 @@ public class Waves implements OnDataReady {
             return this;
         }
 
-        public RequestBuilder duration(long duration) {
-            this.duration = duration;
+        public RequestBuilder waveColorSet(@ColorRes int backgroundColor, @ColorRes int waveColor) {
+            try {
+                shaderColors[0] = this.context.getResources().getColor(backgroundColor);
+                shaderColors[1] = this.context.getResources().getColor(waveColor);
+                shaderColors[2] = this.context.getResources().getColor(backgroundColor);
+            } catch (NullPointerException e) {
+                throw new CompositeException(new RuntimeException("Waves was not able to resolve the context, " +
+                        "whether you didn't assign a context or you are using the application's context"),
+                        new NullPointerException("Waves couldn't resolve the context." +
+                                " Use the builder method `context(Context context)"));
+            }
+            return this;
+        }
+
+        public RequestBuilder speed(long speed) {
+            this.spped = speed;
             return this;
         }
 
@@ -168,12 +204,17 @@ public class Waves implements OnDataReady {
             return this;
         }
 
+        public RequestBuilder context(Context context) {
+            this.context = context;
+            return this;
+        }
+
         private ValueAnimator getAnimation() {
             ValueAnimator animator = ValueAnimator.ofFloat(-1f, 1f);
             animator.setRepeatCount(ValueAnimator.INFINITE);
             animator.setInterpolator(new AccelerateDecelerateInterpolator());
             animator.setStartDelay(START_DELAY);
-            animator.setDuration(duration);
+            animator.setDuration(spped);
             return animator;
         }
 
@@ -232,6 +273,5 @@ public class Waves implements OnDataReady {
                         .execute());
             }
         }
-
     }
 }
