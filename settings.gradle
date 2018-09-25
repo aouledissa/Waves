@@ -1,1 +1,1 @@
-include ':app', ':waves'//, ':shimmerizer-annotations', ':shimmerizer-compiler'
+include ':waves'

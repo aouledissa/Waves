@@ -77,42 +77,6 @@ public final class Waves implements OnDataReady {
         return waves.requestBuilder.context(context);
     }
 
-    private static <T extends Activity> void instantiateWaves(T target, String suffix) {
-        Class<?> targetClass = target.getClass();
-        String className = targetClass.getName();
-        try {
-            Class<?> bindingClass = targetClass
-                    .getClassLoader()
-                    .loadClass(className + suffix);
-            Constructor<?> classConstructor = bindingClass.getConstructor(targetClass);
-            try {
-                classConstructor.newInstance(target);
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException("Unable to invoke " + classConstructor, e);
-            } catch (InstantiationException e) {
-                throw new RuntimeException("Unable to invoke " + classConstructor, e);
-            } catch (InvocationTargetException e) {
-                Throwable cause = e.getCause();
-                if (cause instanceof RuntimeException) {
-                    throw (RuntimeException) cause;
-                }
-                if (cause instanceof Error) {
-                    throw (Error) cause;
-                }
-                throw new RuntimeException("Unable to create instance.", cause);
-            }
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException("Attempt to use Auto bind without shimmerizer-compiler annotation processor plugin");
-            //throw new RuntimeException("Unable to find Class for " + className + suffix, e);
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException("Unable to find constructor for " + className + suffix, e);
-        }
-    }
-
-    /*public static <T extends Activity> void standalone(T activity) {
-        instantiateWaves(activity, BindingSuffix.GENERATED_CLASS_SUFFIX);
-    }*/
-
     @Override
     public void notifyDataReady() {
         for (Disposable disposable : waves.requestBuilder.observerBag)
