@@ -30,7 +30,7 @@ import io.reactivex.exceptions.CompositeException;
  * Created by mohamed on 20/09/2018.
  * email: devmed01@gmail.com
  */
-public class Waves implements OnDataReady {
+public final class Waves implements OnDataReady {
 
     private static volatile Waves waves = null;
 
