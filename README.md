@@ -1,7 +1,9 @@
-# [Waves](https://github.com/andromedcodes/Waves) - Yet A Better Shimmer Api (YABS)
 ![](https://jitpack.io/v/andromedcodes/Waves.svg)
+# [Waves](https://github.com/andromedcodes/Waves) - Yet A Better Shimmer Api (YABS)
 
 Waves is simply a light weight library that adds shimmer effect for any view you assign to it.
+
+![demo](/images/Waves-demo.gif)
 
 # Setup
 
